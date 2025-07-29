@@ -95,7 +95,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
 
   // 2. USERNAME OR EMAIL VALIDATE
-  if (!username || !email) {
+  if (!(username || email)) {
     throw new ApiError(400, "username or email is required");
   }
 
@@ -111,7 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // 5. ACCESS AND REFRESH TOKEN
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-    User._id
+    user._id
   );
 
   // 6. SEND COOKIE
