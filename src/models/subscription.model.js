@@ -1,13 +1,16 @@
 import mongoose from "mongoose";
 
+// This schema takes user who is subscribing as "SUBSCRIBER" and to which channel he or she be subscribing as "CHANNEL".
 const subscriptionSchema = new mongoose.Schema(
   {
     subscriber: {
-      type: mongoose.Schema.ObjectId, // One who is subscribing
+      // One who is subscribing
+      type: mongoose.Schema.ObjectId,
       ref: "User",
     },
     channel: {
-      type: mongoose.Schema.ObjectId, // One to whom 'subscriber' is subscribing
+      // One to whom 'subscriber' is subscribing
+      type: mongoose.Schema.ObjectId,
       ref: "User",
     },
   },
