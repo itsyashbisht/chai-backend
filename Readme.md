@@ -1,4 +1,4 @@
-# Chai-and-backend
+# Video-Nest-backend
 
 A backend project for managing and serving data for the Chai-and-backend application.
 
