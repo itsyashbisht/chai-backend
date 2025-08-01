@@ -148,8 +148,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1, // this remove the field from the document
       },
     },
     {
@@ -171,7 +171,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
-    req.cookies?.refreshToken || req?.body.refreshToken;
+    req.cookies?.refreshToken || req?.body?.refreshToken;
 
   if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized request");
 
@@ -216,6 +216,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
+  console.log(oldPassword, newPassword);
 
   const user = await User.findById(req.user?._id);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
@@ -233,7 +234,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(200, req.user, "Current user fetched succesfully");
+    .json(new ApiResponse(200, req.user, "Current user fetched succesfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -241,12 +242,12 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
   if (!fullName || !email) throw new ApiError(400, "All fields are required");
 
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
-        fullName,
-        email,
+        fullName: fullName,
+        email: email,
       },
     },
     { new: true }
@@ -313,7 +314,8 @@ const updateUsercoverImage = asyncHandler(async (req, res) => {
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-  const { username } = res.params;
+  console.log(res);
+  const { username } = req.params;
 
   if (!username?.trim()) throw new ApiError(400, "username is missing");
 
@@ -387,7 +389,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(res.user._id),
+        _id: new mongoose.Types.ObjectId(req.user._id),
       },
     },
     {
@@ -427,9 +429,17 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     },
   ]);
 
+  console.log(user[0].watchHistory);
+
   return res
     .status(200)
-    .json(200, user[0].watchHistory, "Watch history fetched successfully");
+    .json(
+      new ApiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch history fetched successfully"
+      )
+    );
 });
 
 export {
