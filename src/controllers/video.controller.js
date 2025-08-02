@@ -9,13 +9,13 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
     limit = 10,
-    query,
+    query, // TODO: for search field
     sortBy = "createdAt",
     sortType = "asc", // asc or desc
-    userId,
   } = req.query;
 
-  if (!userId) throw new ApiError(400, "userId field is required");
+  const userId = req.user?._id;
+  if (!userId) throw new ApiError(400, "userId field is required.");
 
   const settingSortType = sortType === "asc" ? -1 : 1;
 
