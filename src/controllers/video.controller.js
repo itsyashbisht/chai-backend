@@ -1,13 +1,78 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
+  const {
+    page = 1,
+    limit = 10,
+    query,
+    sortBy = "createdAt",
+    sortType = "asc", // asc or desc
+    userId,
+  } = req.query;
+
+  if (!userId) throw new ApiError(400, "userId field is required");
+
+  const settingSortType = sortType === "asc" ? -1 : 1;
+
+  const videos = await Video.aggregate([
+    {
+      $match: {
+        owner: userId,
+      },
+    },
+    {
+      $sort: {
+        [sortBy]: settingSortType,
+      },
+    },
+    {
+      $skip: parseInt((page - 1) * 10),
+    },
+    {
+      $limit: parseInt(limit),
+    },
+    {
+      $project: {
+        createdAt: 1,
+        title: 1,
+        isPublished: 1,
+        views: 1,
+        owner: 1,
+      },
+    },
+  ]);
+
+  console.log("Videos :", videos);
+
+  if (!videos || videos === undefined || videos === null) {
+    throw new ApiError(404, "Error fetching videos for the user.");
+  }
+
+  const totalVideos = await Video.countDocuments({ owner: userId });
+  console.log("TotalVideos : ", totalVideos);
+
+  if (totalVideos === undefined) {
+    throw new ApiError(404, "No videos found for the user.");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        page,
+        limit,
+        totalPages: Math.ceil(totalVideos / limit),
+        totalVideos,
+        videos,
+      },
+      "Videos fetched successfully"
+    )
+  );
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -101,10 +166,49 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: delete video
+
+  if (!videoId) throw new ApiError(400, "Invalid video Id");
+
+  await Video.findByIdAndDelete(videoId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Video deleted successfully"));
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+  if (!videoId) throw new ApiError(400, "Invalid video Id");
+  console.log(req.body);
+
+  const { isPublished } = req.body;
+
+  if (!isPublished)
+    throw new ApiError(400, "Publish status is required in request body");
+
+  const toggleStatus = isPublished ? false : true;
+
+  const video = await Video.findByIdAndUpdate(
+    videoId,
+    {
+      $set: {
+        isPublished: toggleStatus,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        video.isPublished,
+        "Publish status toggled successfully"
+      )
+    );
 });
 
 export {
