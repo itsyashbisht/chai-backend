@@ -1,4 +1,3 @@
-import mongoose, { isValidObjectId } from "mongoose";
 import { Playlist } from "../models/playlist.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -158,11 +157,11 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 });
 
 export {
-  createPlaylist,
-  getUserPlaylists,
-  getPlaylistById,
   addVideoToPlaylist,
-  removeVideoFromPlaylist,
+  createPlaylist,
   deletePlaylist,
+  getPlaylistById,
+  getUserPlaylists,
+  removeVideoFromPlaylist,
   updatePlaylist,
 };

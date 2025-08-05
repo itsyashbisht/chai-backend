@@ -47,8 +47,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
     },
   ]);
 
-  console.log("Videos :", videos);
-
   if (!videos || videos === undefined || videos === null) {
     throw new ApiError(404, "Error fetching videos for the user.");
   }
@@ -179,10 +177,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
 const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   if (!videoId) throw new ApiError(400, "Invalid video Id");
-  console.log(req.body);
 
   const { isPublished } = req.body;
-
   if (!isPublished)
     throw new ApiError(400, "Publish status is required in request body");
 
