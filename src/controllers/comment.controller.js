@@ -64,10 +64,40 @@ const addComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
   // TODO: update a comment
+  const { commentId } = req.params;
+  const { content } = req.body;
+  if (!commentId || !content)
+    throw new ApiError(400, "CommentId and content fields are required");
+
+  const updatedComment = await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      content,
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!updatedComment) throw new ApiError(400, "Error updating the comment.");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updateComment, "Comment updated successfully"));
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
+  const { commentId } = req.params;
+  if (!commentId)
+    throw new ApiError(400, "CommentId and content fields are required");
+
+  const deletedComment = await Comment.findByIdAndDelete(commentId);
+  if (!deletedComment) throw new ApiError(400, "Comment not found");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Comment deleted successfully"));
 });
 
 export { getVideoComments, addComment, updateComment, deleteComment };
