@@ -3,13 +3,13 @@ import { ApiError } from "../utils/apiError.js";
 import { Video } from "../models/video.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   //TODO: get all videos based on query, sort, pagination
   const {
     page = 1,
     limit = 10,
-    query, // TODO: for search field
     sortBy = "createdAt",
     sortType = "asc", // asc or desc
   } = req.query;
@@ -17,12 +17,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(400, "userId field is required.");
 
-  const settingSortType = sortType === "asc" ? -1 : 1;
+  const settingSortType = sortType === "asc" ? 1 : -1;
 
   const videos = await Video.aggregate([
     {
       $match: {
-        owner: userId,
+        owner: new mongoose.Types.ObjectId(userId),
       },
     },
     {
@@ -46,8 +46,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
       },
     },
   ]);
+  console.log("videos:", videos);
 
-  if (!videos || videos === undefined || videos === null) {
+  if (!videos || videos === undefined) {
     throw new ApiError(404, "Error fetching videos for the user.");
   }
 
@@ -75,6 +76,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
+  const userId = req.user?._id;
 
   if (!title || !description)
     throw new ApiError(400, "Title and description are required");
@@ -97,6 +99,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
   const video = await Video.create({
     title,
     description,
+    owner: userId,
     videoFile: videoToUpload.url,
     thumbnail: thumbnail.url,
     duration: videoToUpload.duration,
