@@ -55,7 +55,6 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(channelSubscribers);
   if (!channelSubscribers)
     throw new ApiError(400, "Error fetching channel subscribers");
 
@@ -82,7 +81,6 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(subscribedChannels);
   if (!subscribedChannels)
     throw new ApiError(400, "Error fetching channel subscribers");
 
