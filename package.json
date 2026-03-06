@@ -1,6 +1,6 @@
 {
-  "name": "chai-and-backend",
-  "description": "a backend ",
+  "name": "streambrew-api",
+  "description": "Backend API for video, playlists, social interactions, and auth",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",

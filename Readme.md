@@ -1,6 +1,6 @@
-# Chai-and-backend
+# StreamBrew Backend API
 
-A backend service built for managing video content, authentication, playlists, and more—powering the **Chai aur Backend** application.
+A backend service built for managing video content, authentication, playlists, and more for the **StreamBrew** application.
 
 ## Features
 
@@ -23,11 +23,11 @@ A backend service built for managing video content, authentication, playlists, a
 - JWT for authentication
 - Multer for file uploads
 
-## 📬 Postman Collection
+## Postman Collection
 
 Test the API using the Postman collection:
 
-👉 [Click here to view the collection](https://solar-desert-201844.postman.co/workspace/Api-checking~0941ebab-c1ea-4e3f-96eb-3d84b9e38fee/collection/37897350-b4a38d11-3a1f-4008-a74c-2763e599e6e4?action=share&creator=37897350&active-environment=37897350-89df66a6-3004-47ef-b67f-f34ed3d9bdd3)
+[Click here to view the collection](https://solar-desert-201844.postman.co/workspace/Api-checking~0941ebab-c1ea-4e3f-96eb-3d84b9e38fee/collection/37897350-b4a38d11-3a1f-4008-a74c-2763e599e6e4?action=share&creator=37897350&active-environment=37897350-89df66a6-3004-47ef-b67f-f34ed3d9bdd3)
 
 ---
 
@@ -36,8 +36,8 @@ Test the API using the Postman collection:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/Chai-and-backend.git
-   cd Chai-and-backend
+   git clone https://github.com/yourusername/streambrew-api.git
+   cd streambrew-api
    ```
 
 2. **Install dependencies**
@@ -65,4 +65,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 
-This project is licensed under Chai aur Code..
+This project is licensed under ISC.
